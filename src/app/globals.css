@@ -1,0 +1,436 @@
+@import "tailwindcss";
+
+/* ============================================================
+   OPERATION 15 — DESIGN TOKENS
+   Military-Grade Dark Theme | Version 1.0
+   ============================================================ */
+
+/* ── Raw palette ─────────────────────────────────────────── */
+:root {
+  /* Neutrals */
+  --ground-950: #080a0c;
+  --ground-900: #0d1014;
+  --ground-850: #111418;
+  --ground-800: #161b21;
+  --ground-700: #1e2530;
+  --ground-600: #273040;
+  --ground-500: #38455a;
+  --ground-400: #546070;
+  --ground-300: #7a8fa8;
+  --ground-200: #a8bbcc;
+  --ground-100: #d4e0e8;
+  --ground-50:  #eef3f7;
+  --white:      #f8fafb;
+
+  /* Alpha overlays */
+  --white-04: rgba(248, 250, 251, 0.04);
+  --white-06: rgba(248, 250, 251, 0.06);
+  --white-08: rgba(248, 250, 251, 0.08);
+  --white-12: rgba(248, 250, 251, 0.12);
+  --white-16: rgba(248, 250, 251, 0.16);
+  --white-24: rgba(248, 250, 251, 0.24);
+  --white-40: rgba(248, 250, 251, 0.40);
+
+  /* Operative Green — primary brand / action */
+  --operative-500: #00e676;
+  --operative-400: #33eb91;
+  --operative-300: #66f0ab;
+  --operative-600: #00c260;
+  --operative-900: #002714;
+  --operative-800: #003d20;
+
+  /* Signal Amber — warning / elevated alert */
+  --signal-500: #ffb300;
+  --signal-400: #ffc233;
+  --signal-600: #e6a000;
+  --signal-900: #231a00;
+  --signal-800: #332500;
+
+  /* Breach Red — critical / destructive / error */
+  --breach-500: #ff3d3d;
+  --breach-400: #ff6464;
+  --breach-600: #e02828;
+  --breach-900: #230000;
+  --breach-800: #330808;
+
+  /* Intel Blue — information / data / neutral action */
+  --intel-500: #2979ff;
+  --intel-400: #5393ff;
+  --intel-600: #1a5ce6;
+  --intel-900: #00082b;
+  --intel-800: #001040;
+
+  /* Classified Violet — premium / locked / pro tier */
+  --classified-500: #9c27b0;
+  --classified-400: #ba52cc;
+  --classified-600: #7b1fa2;
+  --classified-900: #12001a;
+  --classified-800: #1f0030;
+
+  /* ── Semantic tokens ────────────────────────────────────── */
+  --bg-page:     var(--ground-950);
+  --bg-surface:  var(--ground-850);
+  --bg-elevated: var(--ground-800);
+  --bg-overlay:  var(--ground-700);
+  --bg-hover:    var(--ground-600);
+  --bg-input:    var(--ground-900);
+
+  --border-default: var(--ground-500);
+  --border-subtle:  var(--white-08);
+  --border-strong:  var(--ground-400);
+  --border-focus:   var(--operative-500);
+
+  --text-primary:   var(--white);
+  --text-secondary: var(--ground-200);
+  --text-tertiary:  var(--ground-300);
+  --text-disabled:  var(--ground-400);
+  --text-inverse:   var(--ground-950);
+  --text-link:      var(--operative-400);
+
+  --status-success-text:   var(--operative-500);
+  --status-success-bg:     var(--operative-900);
+  --status-success-border: var(--operative-600);
+
+  --status-warning-text:   var(--signal-500);
+  --status-warning-bg:     var(--signal-900);
+  --status-warning-border: var(--signal-600);
+
+  --status-error-text:     var(--breach-500);
+  --status-error-bg:       var(--breach-900);
+  --status-error-border:   var(--breach-600);
+
+  --status-info-text:      var(--intel-500);
+  --status-info-bg:        var(--intel-900);
+  --status-info-border:    var(--intel-600);
+
+  /* ── Motion ─────────────────────────────────────────────── */
+  --transition-fast:   100ms ease;
+  --transition-base:   150ms ease;
+  --transition-slow:   300ms ease;
+  --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --ease-in-out:   cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out:      cubic-bezier(0, 0, 0.2, 1);
+  --ease-in:       cubic-bezier(0.4, 0, 1, 1);
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-military: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* ── Z-index ─────────────────────────────────────────────── */
+  --z-base:     0;
+  --z-raised:   10;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-overlay:  300;
+  --z-modal:    400;
+  --z-toast:    500;
+  --z-tooltip:  600;
+}
+
+/* ── Tailwind v4 theme mapping ───────────────────────────── */
+@theme inline {
+  /* Fonts */
+  --font-display: "Barlow Condensed", "Roboto Condensed", "Arial Narrow", sans-serif;
+  --font-sans:    "Inter", "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", "Fira Code", "SF Mono", monospace;
+
+  /* Colors — ground */
+  --color-ground-950: var(--ground-950);
+  --color-ground-900: var(--ground-900);
+  --color-ground-850: var(--ground-850);
+  --color-ground-800: var(--ground-800);
+  --color-ground-700: var(--ground-700);
+  --color-ground-600: var(--ground-600);
+  --color-ground-500: var(--ground-500);
+  --color-ground-400: var(--ground-400);
+  --color-ground-300: var(--ground-300);
+  --color-ground-200: var(--ground-200);
+  --color-ground-100: var(--ground-100);
+  --color-ground-50:  var(--ground-50);
+  --color-op15-white: var(--white);
+
+  /* Colors — operative */
+  --color-operative-900: var(--operative-900);
+  --color-operative-800: var(--operative-800);
+  --color-operative-600: var(--operative-600);
+  --color-operative-500: var(--operative-500);
+  --color-operative-400: var(--operative-400);
+  --color-operative-300: var(--operative-300);
+
+  /* Colors — signal */
+  --color-signal-900: var(--signal-900);
+  --color-signal-800: var(--signal-800);
+  --color-signal-600: var(--signal-600);
+  --color-signal-500: var(--signal-500);
+  --color-signal-400: var(--signal-400);
+
+  /* Colors — breach */
+  --color-breach-900: var(--breach-900);
+  --color-breach-800: var(--breach-800);
+  --color-breach-600: var(--breach-600);
+  --color-breach-500: var(--breach-500);
+  --color-breach-400: var(--breach-400);
+
+  /* Colors — intel */
+  --color-intel-900: var(--intel-900);
+  --color-intel-800: var(--intel-800);
+  --color-intel-600: var(--intel-600);
+  --color-intel-500: var(--intel-500);
+  --color-intel-400: var(--intel-400);
+
+  /* Colors — classified */
+  --color-classified-900: var(--classified-900);
+  --color-classified-800: var(--classified-800);
+  --color-classified-600: var(--classified-600);
+  --color-classified-500: var(--classified-500);
+  --color-classified-400: var(--classified-400);
+
+  /* Semantic surface colors */
+  --color-bg-page:     var(--bg-page);
+  --color-bg-surface:  var(--bg-surface);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-overlay:  var(--bg-overlay);
+  --color-bg-hover:    var(--bg-hover);
+  --color-bg-input:    var(--bg-input);
+
+  /* Border radius */
+  --radius-none: 0px;
+  --radius-xs:   2px;
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-xl:   12px;
+  --radius-2xl:  16px;
+  --radius-full: 9999px;
+
+  /* Spacing — 4px base unit */
+  --spacing-px:   1px;
+  --spacing-0-5:  2px;
+  --spacing-1:    4px;
+  --spacing-1-5:  6px;
+  --spacing-2:    8px;
+  --spacing-2-5:  10px;
+  --spacing-3:    12px;
+  --spacing-4:    16px;
+  --spacing-5:    20px;
+  --spacing-6:    24px;
+  --spacing-7:    28px;
+  --spacing-8:    32px;
+  --spacing-10:   40px;
+  --spacing-12:   48px;
+  --spacing-14:   56px;
+  --spacing-16:   64px;
+  --spacing-20:   80px;
+  --spacing-24:   96px;
+  --spacing-32:   128px;
+}
+
+/* ── Base styles ─────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  min-height: 100%;
+  line-height: 1.5;
+}
+
+/* ── Focus ring ──────────────────────────────────────────── */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--operative-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* ── Scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ground-600);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ground-500);
+}
+
+/* ── Skip link ───────────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--spacing-4);
+  z-index: var(--z-tooltip);
+  background-color: var(--operative-500);
+  color: var(--ground-950);
+  padding: var(--spacing-2) var(--spacing-4);
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* ── Screen reader only ──────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Type utilities ──────────────────────────────────────── */
+.type-display-xl {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 6vw, 60px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.type-display-lg {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4.5vw, 48px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.type-heading-lg {
+  font-family: var(--font-sans);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.type-heading-md {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.type-body-md {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.type-body-sm {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.type-label-md {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.type-mono-lg {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.type-callsign {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--operative-500);
+}
+
+/* ── Animation keyframes ─────────────────────────────────── */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+@keyframes radar-ping {
+  0%   { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(2);   opacity: 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Reduced motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
