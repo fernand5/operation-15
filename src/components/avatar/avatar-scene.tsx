@@ -1,9 +1,10 @@
 "use client";
 
-import { Suspense, useRef, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Environment, useGLTF, useAnimations, Html } from "@react-three/drei";
+import { OrbitControls, useGLTF, useAnimations, Html } from "@react-three/drei";
 import * as THREE from "three";
+import { AnimatedCharacter } from "./animated-character";
 import { DEFAULT_AVATAR_URL, getAnimationForExercise, PHASE_CAMERA_PRESETS } from "@/lib/avatar-animations";
 import type { CameraPreset } from "@/lib/avatar-animations";
 import type { PhaseType } from "@/lib/workout-engine";
@@ -28,57 +29,7 @@ function CameraRig({ preset }: { preset: CameraPreset }) {
   return null;
 }
 
-/* ── Simple placeholder avatar (when RPM URL unavailable) ───── */
-function PlaceholderAvatar({ animating }: { animating: boolean }) {
-  const groupRef = useRef<THREE.Group>(null);
-  const bobRef = useRef(0);
-
-  useFrame((_, delta) => {
-    if (!groupRef.current || !animating) return;
-    bobRef.current += delta * 2;
-    groupRef.current.position.y = Math.sin(bobRef.current) * 0.05;
-  });
-
-  return (
-    <group ref={groupRef} position={[0, 0, 0]}>
-      {/* Body */}
-      <mesh position={[0, 0.9, 0]}>
-        <capsuleGeometry args={[0.18, 0.6, 4, 8]} />
-        <meshStandardMaterial color="#273040" roughness={0.4} metalness={0.1} />
-      </mesh>
-      {/* Head */}
-      <mesh position={[0, 1.65, 0]}>
-        <sphereGeometry args={[0.16, 16, 16]} />
-        <meshStandardMaterial color="#546070" roughness={0.5} />
-      </mesh>
-      {/* Left arm */}
-      <mesh position={[-0.28, 1.0, 0]} rotation={[0, 0, 0.3]}>
-        <capsuleGeometry args={[0.07, 0.4, 4, 8]} />
-        <meshStandardMaterial color="#273040" roughness={0.4} />
-      </mesh>
-      {/* Right arm */}
-      <mesh position={[0.28, 1.0, 0]} rotation={[0, 0, -0.3]}>
-        <capsuleGeometry args={[0.07, 0.4, 4, 8]} />
-        <meshStandardMaterial color="#273040" roughness={0.4} />
-      </mesh>
-      {/* Left leg */}
-      <mesh position={[-0.12, 0.32, 0]}>
-        <capsuleGeometry args={[0.09, 0.5, 4, 8]} />
-        <meshStandardMaterial color="#1E2530" roughness={0.5} />
-      </mesh>
-      {/* Right leg */}
-      <mesh position={[0.12, 0.32, 0]}>
-        <capsuleGeometry args={[0.09, 0.5, 4, 8]} />
-        <meshStandardMaterial color="#1E2530" roughness={0.5} />
-      </mesh>
-      {/* OP-15 chest badge */}
-      <mesh position={[0, 1.05, 0.19]}>
-        <boxGeometry args={[0.12, 0.08, 0.01]} />
-        <meshStandardMaterial color="#00E676" emissive="#00E676" emissiveIntensity={0.3} />
-      </mesh>
-    </group>
-  );
-}
+/* PlaceholderAvatar removed — AnimatedCharacter handles all cases */
 
 /* ── RPM avatar model with Mixamo animation ─────────────────── */
 function RPMAvatarModel({
@@ -200,15 +151,19 @@ export function AvatarScene({
         <Ground />
 
         <Suspense fallback={<Loader />}>
-          {useRPM ? (
+          {/* Animated procedural character — always shown */}
+          <AnimatedCharacter
+            exerciseName={isRest ? "idle" : exerciseName}
+            isPaused={isPaused}
+          />
+          {/* Optional: overlay RPM avatar when URL provided */}
+          {useRPM && (
             <RPMAvatarModel
               avatarUrl={resolvedAvatarUrl}
               animationUrl={animConfig.url}
               timeScale={animConfig.timeScale}
               isPaused={isPaused}
             />
-          ) : (
-            <PlaceholderAvatar animating={!isPaused && !isRest} />
           )}
         </Suspense>
       </Canvas>
