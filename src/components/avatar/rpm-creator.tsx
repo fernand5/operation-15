@@ -51,7 +51,11 @@ export function RPMCreator({
     return () => window.removeEventListener("message", handleMessage);
   }, [handleMessage]);
 
-  const rpmUrl = `https://${subdomain}.readyplayer.me/avatar?frameApi`;
+  // 'demo' is not a valid RPM subdomain — fall back to the public demo endpoint
+  const resolvedSubdomain = subdomain === "demo" ? "demo.readyplayer.me" : `${subdomain}.readyplayer.me`;
+  const rpmUrl = subdomain === "demo"
+    ? "https://readyplayer.me/avatar?frameApi"
+    : `https://${subdomain}.readyplayer.me/avatar?frameApi`;
 
   return (
     <div

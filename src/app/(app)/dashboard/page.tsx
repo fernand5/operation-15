@@ -96,6 +96,7 @@ async function DashboardContent() {
           </p>
         </div>
         <MissionCard
+          workoutId="op-thunder-w1d1"
           operationName="Operation Thunder"
           title="Lower Body Power"
           durationMin={15}

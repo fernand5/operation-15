@@ -32,8 +32,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         .toUpperCase()
         .slice(0, 2);
     }
-  } catch {
-    // Supabase not configured — show shell with defaults for preview
+  } catch (err) {
+    // Re-throw Next.js redirect/notFound signals — never swallow them
+    if (
+      err instanceof Error &&
+      (err.message === "NEXT_REDIRECT" || err.message === "NEXT_NOT_FOUND" ||
+       (err as { digest?: string }).digest?.startsWith("NEXT_REDIRECT"))
+    ) {
+      throw err;
+    }
+    // Supabase unreachable — show shell with defaults
   }
 
   return (
