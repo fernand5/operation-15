@@ -113,8 +113,8 @@ function animateLUNGE(t: number, side: 1 | -1 = 1): Pose {
 function animateGLUTE_BRIDGE(t: number): Pose {
   const phase = (Math.sin(t * Math.PI) + 1) / 2;
   return {
-    // Lying on back: rotate entire body -90° on X
-    hipsY: phase * 0.3,
+    // Lying on back. -0.65 brings hips to y≈0.3 (floor level for supine pose)
+    hipsY: -0.65 + phase * 0.3,
     hipsRotX: -Math.PI / 2 + 0.15 * phase,   // lying flat, hips raise
     torsoRotX: -0.3 * phase,
     leftUpperLegRotX:  -1.4 + 0.8  * phase,  // knees bent, feet flat
@@ -168,7 +168,7 @@ function animateWALL_SIT(): Pose {
 
 function animatePLANK(): Pose {
   return {
-    hipsY: -0.5,
+    hipsY: -0.65,                     // brings hips to y≈0.3 (floor level prone)
     hipsRotX: -Math.PI / 2.1,        // prone / face-down
     torsoRotX: 0.05,
     leftUpperLegRotX:  0,
@@ -185,21 +185,83 @@ function animatePLANK(): Pose {
 }
 
 function animateSTRETCH_HIP_FLEXOR(t: number): Pose {
-  const hold = (Math.sin(t * 0.8) + 1) / 2 * 0.08; // subtle breathing
+  const breath = Math.sin(t * 0.8) * 0.03;
   return {
-    hipsY: -0.25,
-    hipsRotX: 0.1,
-    torsoRotX: 0.12,
-    leftUpperLegRotX:  -0.85,   // front leg
-    rightUpperLegRotX:  0.7,    // rear leg on ground
-    leftLowerLegRotX:   1.1,
-    rightLowerLegRotX:  0.2,
-    leftUpperArmRotX:   0 + hold,
-    rightUpperArmRotX:  0 + hold,
-    leftUpperArmRotZ:   0.2,
-    rightUpperArmRotZ: -0.2,
+    hipsY: -0.28,
+    hipsRotX: 0.08,
+    torsoRotX: 0.1,
+    leftUpperLegRotX:  -0.88,         // front leg kneeling lunge
+    rightUpperLegRotX:  0.65,         // rear leg extended back
+    leftLowerLegRotX:   1.15,
+    rightLowerLegRotX:  0.15,
+    leftUpperArmRotX:   0 + breath,
+    rightUpperArmRotX:  0 + breath,
+    leftUpperArmRotZ:   0.22,
+    rightUpperArmRotZ: -0.22,
     leftForearmRotX:    0,
     rightForearmRotX:   0,
+  };
+}
+
+function animateQUAD_STRETCH(t: number): Pose {
+  // Standing quad stretch: one leg straight, other knee bent heel-to-glute
+  const breath = Math.sin(t * 0.9) * 0.02;
+  return {
+    hipsY: 0,
+    hipsRotX: 0,
+    torsoRotX: 0.04 + breath,          // upright, slight natural sway
+    leftUpperLegRotX:  0,              // standing leg — straight
+    leftLowerLegRotX:  0,
+    rightUpperLegRotX:  0.55,          // thigh slightly back
+    rightLowerLegRotX:  2.1,           // knee bent fully — heel to glute
+    leftUpperArmRotX:   0.15,          // arm out for balance
+    rightUpperArmRotX: -0.6,           // arm reaching back toward foot
+    leftUpperArmRotZ:   0.35,
+    rightUpperArmRotZ: -0.15,
+    leftForearmRotX:    0,
+    rightForearmRotX:   0.9,           // forearm curled to hold ankle
+  };
+}
+
+function animatePUSH_UP(t: number): Pose {
+  // Prone: body rotated forward (face down), arms push up/down
+  const phase = (Math.sin(t * Math.PI * 0.9) + 1) / 2; // 0=down, 1=up
+  const bodyAngle = -Math.PI / 2 + 0.08;                // face-down prone
+  return {
+    hipsY: -0.65 + 0.18 * phase,       // floor-level (y≈0.3) rising as arms extend
+    hipsRotX: bodyAngle,
+    torsoRotX: 0.04,
+    leftUpperLegRotX:  0,
+    rightUpperLegRotX: 0,
+    leftLowerLegRotX:  0,
+    rightLowerLegRotX: 0,
+    // Arms: at bottom (phase=0) elbows bent 90°; at top (phase=1) arms extended
+    leftUpperArmRotX:  -(Math.PI / 2.1) + 0.8 * phase,
+    rightUpperArmRotX: -(Math.PI / 2.1) + 0.8 * phase,
+    leftUpperArmRotZ:   0.28,
+    rightUpperArmRotZ: -0.28,
+    leftForearmRotX:   1.45 - 1.1 * phase,   // elbow bends/extends
+    rightForearmRotX:  1.45 - 1.1 * phase,
+  };
+}
+
+function animateINVERTED_ROW(t: number): Pose {
+  // Pull-up / inverted row: arms pull from overhead down
+  const phase = (Math.sin(t * Math.PI * 0.85) + 1) / 2;
+  return {
+    hipsY: 0,
+    hipsRotX: 0,
+    torsoRotX: -0.08 * phase,          // slight chest-up lean
+    leftUpperLegRotX:  0,
+    rightUpperLegRotX: 0,
+    leftLowerLegRotX:  0,
+    rightLowerLegRotX: 0,
+    leftUpperArmRotX:  -2.2 + 1.4 * phase,  // arms: overhead → elbows back
+    rightUpperArmRotX: -2.2 + 1.4 * phase,
+    leftUpperArmRotZ:   0.4,
+    rightUpperArmRotZ: -0.4,
+    leftForearmRotX:   0.6 + 0.8 * phase,   // forearms curl
+    rightForearmRotX:  0.6 + 0.8 * phase,
   };
 }
 
@@ -227,15 +289,18 @@ function getAnimation(exerciseName: string, t: number): Pose {
   const name = exerciseName.toLowerCase();
   const cycle = t % 2; // 2-second cycles
 
-  if (name.includes("squat") && name.includes("jump")) return animateJUMP_SQUAT(cycle / 2);
-  if (name.includes("squat"))            return animateSQUAT(cycle / 2);
-  if (name.includes("lunge"))            return animateLUNGE(cycle / 2, name.includes("reverse") ? -1 : 1);
+  if (name.includes("jump") && name.includes("squat")) return animateJUMP_SQUAT(cycle / 2);
+  if (name.includes("squat"))              return animateSQUAT(cycle / 2);
+  if (name.includes("lunge"))              return animateLUNGE(cycle / 2, name.includes("reverse") ? -1 : 1);
   if (name.includes("glute bridge") || name.includes("bridge")) return animateGLUTE_BRIDGE(cycle / 2);
-  if (name.includes("hip circle"))       return animateHIP_CIRCLES(t);
-  if (name.includes("wall sit"))         return animateWALL_SIT();
-  if (name.includes("plank"))            return animatePLANK();
-  if (name.includes("hip flexor") || name.includes("stretch")) return animateSTRETCH_HIP_FLEXOR(t);
-  if (name.includes("quad stretch"))     return animateSTRETCH_HIP_FLEXOR(t);
+  if (name.includes("hip circle"))         return animateHIP_CIRCLES(t);
+  if (name.includes("wall sit"))           return animateWALL_SIT();
+  if (name.includes("plank"))              return animatePLANK();
+  if (name.includes("push") || name.includes("push-up") || name.includes("pushup")) return animatePUSH_UP(t);
+  if (name.includes("pull") || name.includes("row") || name.includes("chin")) return animateINVERTED_ROW(t);
+  if (name.includes("quad stretch"))       return animateQUAD_STRETCH(t);
+  if (name.includes("hip flexor"))         return animateSTRETCH_HIP_FLEXOR(t);
+  if (name.includes("stretch"))            return animateSTRETCH_HIP_FLEXOR(t);
 
   return animateIDLE(t);
 }
@@ -281,7 +346,8 @@ export function AnimatedCharacter({ exerciseName, isPaused }: AnimatedCharacterP
     currentPoseRef.current = pose;
 
     if (!hipsRef.current) return;
-    hipsRef.current.position.y    = pose.hipsY;
+    // 0.95 is the natural standing hip height above the ground
+    hipsRef.current.position.y    = 0.95 + pose.hipsY;
     hipsRef.current.rotation.x    = pose.hipsRotX;
     if (torsoRef.current)   torsoRef.current.rotation.x = pose.torsoRotX;
     if (lUpperLegRef.current) lUpperLegRef.current.rotation.x = pose.leftUpperLegRotX;
@@ -302,8 +368,8 @@ export function AnimatedCharacter({ exerciseName, isPaused }: AnimatedCharacterP
 
   return (
     <group ref={rootRef} position={[0, 0, 0]}>
-      {/* ── HIPS (root of skeleton) ── */}
-      <group ref={hipsRef} position={[0, 0.95, 0]}>
+      {/* ── HIPS (root of skeleton) — Y managed in useFrame via 0.95 + pose.hipsY ── */}
+      <group ref={hipsRef}>
 
         {/* ── TORSO ── */}
         <group ref={torsoRef}>

@@ -42,7 +42,7 @@ export function WorkoutAvatar({
       }}
     >
       {/* 3D Viewport */}
-      <div style={{ height: isFullscreen ? "calc(100vh - 120px)" : "200px" }}>
+      <div style={{ height: isFullscreen ? "calc(100vh - 120px)" : "240px" }}>
         <AvatarViewer
           key={replayKey}
           avatarUrl={avatarUrl}

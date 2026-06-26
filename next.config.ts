@@ -22,8 +22,8 @@ const csp = [
   "media-src 'self' blob: https://*.cloudflare.com https://*.r2.dev",
   // Worker — needed for Three.js / R3F OffscreenCanvas
   "worker-src 'self' blob:",
-  // Frames — Ready Player Me avatar creator
-  "frame-src https://*.readyplayer.me",
+  // Frames — Ready Player Me avatar creator (root + all subdomains)
+  "frame-src https://readyplayer.me https://*.readyplayer.me",
   // Objects
   "object-src 'none'",
   // Base URI

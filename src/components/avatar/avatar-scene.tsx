@@ -9,22 +9,38 @@ import { DEFAULT_AVATAR_URL, getAnimationForExercise, PHASE_CAMERA_PRESETS } fro
 import type { CameraPreset } from "@/lib/avatar-animations";
 import type { PhaseType } from "@/lib/workout-engine";
 
-/* ── Camera controller ──────────────────────────────────────── */
-const CAMERA_POSITIONS: Record<CameraPreset, [number, number, number]> = {
-  front:    [0, 1.4, 2.8],
-  side:     [2.2, 1.2, 1.0],
-  overhead: [0, 3.5, 1.5],
-  close:    [0, 1.6, 1.8],
+/* ── Camera setup per preset ─────────────────────────────────── */
+type CameraConfig = { pos: [number, number, number]; target: [number, number, number]; fov: number };
+
+const CAMERA_CONFIGS: Record<CameraPreset, CameraConfig> = {
+  // Camera at character mid-height, looking straight at mid-body
+  front:    { pos: [0, 1.0, 3.2],  target: [0, 0.85, 0], fov: 38 },
+  side:     { pos: [3.0, 1.0, 0.5], target: [0, 0.85, 0], fov: 38 },
+  overhead: { pos: [0, 3.5, 1.8],  target: [0, 0.5,  0], fov: 38 },
+  close:    { pos: [0, 1.0, 2.2],  target: [0, 0.85, 0], fov: 44 },
 };
 
-function CameraRig({ preset }: { preset: CameraPreset }) {
+/* ── Camera rig — runs every frame, wins over OrbitControls ──── */
+function CameraRig({ preset, orbitEnabled }: { preset: CameraPreset; orbitEnabled: boolean }) {
   const { camera } = useThree();
-  const target = CAMERA_POSITIONS[preset];
+  const cfg = CAMERA_CONFIGS[preset];
 
+  // Set FOV and initial position once
   useEffect(() => {
-    camera.position.set(...target);
-    camera.lookAt(0, 1.0, 0);
-  }, [preset, camera, target]);
+    if (camera instanceof THREE.PerspectiveCamera) {
+      camera.fov = cfg.fov;
+      camera.updateProjectionMatrix();
+    }
+    camera.position.set(...cfg.pos);
+    camera.lookAt(...cfg.target);
+  }, [preset, camera, cfg]);
+
+  // Keep overriding every frame when orbit is locked
+  useFrame(() => {
+    if (orbitEnabled) return;  // user is dragging — let OrbitControls handle it
+    camera.position.set(...cfg.pos);
+    camera.lookAt(...cfg.target);
+  });
 
   return null;
 }
@@ -121,7 +137,7 @@ export function AvatarScene({
     >
       <Canvas
         shadows
-        camera={{ position: [0, 1.4, 2.8], fov: 45 }}
+        camera={{ position: [0, 1.0, 3.2], fov: 38 }}
         gl={{ antialias: true, alpha: false }}
         style={{ background: "linear-gradient(180deg, #0D1014 0%, #161B21 100%)" }}
       >
@@ -137,11 +153,11 @@ export function AvatarScene({
         <pointLight position={[0, 2, 0]} intensity={0.3} color="#00E676" />
 
         {/* Camera */}
-        <CameraRig preset={cameraPreset} />
-        {showControls && (
+        <CameraRig preset={cameraPreset} orbitEnabled={orbitEnabled} />
+        {/* Only mount OrbitControls when user enables it — prevents constant lookAt override */}
+        {showControls && orbitEnabled && (
           <OrbitControls
-            enabled={orbitEnabled}
-            target={[0, 1.0, 0]}
+            target={[0, 0.9, 0]}
             minDistance={1}
             maxDistance={5}
             maxPolarAngle={Math.PI / 1.8}
@@ -151,7 +167,6 @@ export function AvatarScene({
         <Ground />
 
         <Suspense fallback={<Loader />}>
-          {/* Animated procedural character — always shown */}
           <AnimatedCharacter
             exerciseName={isRest ? "idle" : exerciseName}
             isPaused={isPaused}
